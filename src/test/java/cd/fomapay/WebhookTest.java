@@ -33,8 +33,9 @@ class WebhookTest {
 
     @Test
     void knownVector() {
-        // Vecteur commun à tous les SDKs FomaPay : HMAC-SHA256("whsec_test", "1700000000.{\"id\":\"evt_1\"}").
-        String header = "t=1700000000,v1=" + Webhook.hmacHex("whsec_test", "1700000000.{\"id\":\"evt_1\"}");
+        // Vecteur commun à tous les SDKs FomaPay, calculé avec OpenSSL :
+        // printf '1700000000.{"id":"evt_1"}' | openssl dgst -sha256 -hmac whsec_test
+        String header = "t=1700000000,v1=c89214b5b5da833daed6f0b8c5bb6bd58cea9022bd80ccc78230f3942d632925";
         assertDoesNotThrow(() -> Webhook.verify("{\"id\":\"evt_1\"}", header.toUpperCase().replace("T=", "t=").replace("V1=", "v1="), "whsec_test", TOLERANCE, 1_700_000_000L));
     }
 
